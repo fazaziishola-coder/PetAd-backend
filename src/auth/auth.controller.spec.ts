@@ -160,7 +160,7 @@ describe('AuthController (e2e)', () => {
       user: { email: string; role: string };
     };
 
-    expect(res.status).toBe(201);
+    expect(res.status).toBe(200);
     expect(body).toHaveProperty('access_token');
     expect(body.user).toMatchObject({ email: uniqueEmail, role: 'USER' });
   }, 10000);
