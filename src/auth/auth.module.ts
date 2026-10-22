@@ -7,21 +7,23 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './jwt.strategy';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
+import { SessionCleanupCron } from './session-cleanup.cron';
 
 @Module({
   imports: [
     PrismaModule,
     ConfigModule,
+
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         secret: config.get('JWT_SECRET'),
-        signOptions: { expiresIn: config.get('JWT_EXPIRATION', '7d') },
+        signOptions: { expiresIn: config.get('JWT_EXPIRATION', '15m') },
       }),
     }),
   ],
-  providers: [AuthService, JwtStrategy, JwtAuthGuard, RolesGuard],
+  providers: [AuthService, JwtStrategy, JwtAuthGuard, RolesGuard, SessionCleanupCron],
   controllers: [AuthController],
 })
 export class AuthModule {}

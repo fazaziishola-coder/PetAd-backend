@@ -104,7 +104,25 @@ enum LogLevel {
 }
 // ─── Models ──────────────────────────────────────────────
 
+model Session {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash   String    @unique
+  familyId    String
+  userAgent   String?
+  ip          String?
+  expiresAt   DateTime
+  revokedAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+  @@index([familyId])
+}
+
 model User {
+  sessions      Session[]
+
   id        String   @id @default(uuid())
   email     String   @unique
   password  String

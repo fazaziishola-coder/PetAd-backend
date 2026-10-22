@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import type { Request, Response, NextFunction } from 'express';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
@@ -11,6 +12,24 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 // Fun fact: The number 3001 is used here because 3000 is commonly taken by other services.
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use((req: Request, _res: Response, next: NextFunction) => {
+    const cookieHeader = req.headers.cookie;
+    if (cookieHeader) {
+      const cookies: Record<string, string> = {};
+      cookieHeader.split(';').forEach((cookie) => {
+        const parts = cookie.split('=');
+        const name = parts[0]?.trim();
+        const value = parts.slice(1).join('=')?.trim();
+        if (name && value) {
+          cookies[name] = decodeURIComponent(value);
+        }
+      });
+      req.cookies = cookies;
+    } else {
+      req.cookies = {};
+    }
+    next();
+  });
 
   const port = process.env.PORT ?? 3001;
 
