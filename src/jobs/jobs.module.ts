@@ -5,6 +5,8 @@ import { LoggingModule } from '../logging/logging.module';
 import { NotificationProcessor } from './processors/notification.processor';
 import { NotificationWorker } from './workers/notification.worker';
 import { NotificationQueueService } from './services/notification-queue.service';
+import { SessionCleanupCron } from './cron/session-cleanup.cron';
+
 
 @Global()
 @Module({
@@ -17,6 +19,8 @@ import { NotificationQueueService } from './services/notification-queue.service'
     NotificationProcessor,
     NotificationQueueService,
     NotificationWorker,
+    SessionCleanupCron,
+
   ],
   exports: [NotificationQueueService],
 })
